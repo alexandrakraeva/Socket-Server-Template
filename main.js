@@ -10,6 +10,7 @@ const server = http.createServer(app);
 const WebSocket = require("ws");
 
 let keepAliveId;
+let lastValue = 0.5;
 
 const wss =
   process.env.NODE_ENV === "production"
@@ -20,8 +21,9 @@ server.listen(serverPort);
 console.log(`Server started on port ${serverPort} in stage ${process.env.NODE_ENV}`);
 
 wss.on("connection", function (ws, req) {
-  console.log("Connection Opened");
-  console.log("Client size: ", wss.clients.size);
+  // Existing code...
+  ws.send(JSON.stringify({ 'yes': lastValue.toFixed(1), 'no': lastValue.toFixed(1) }));
+});
 
   if (wss.clients.size === 1) {
     console.log("first connection. starting keepalive");
@@ -29,13 +31,13 @@ wss.on("connection", function (ws, req) {
   }
 
   ws.on("message", (data) => {
-    let stringifiedData = data.toString();
-    if (stringifiedData === 'pong') {
-      console.log('keepAlive');
-      return;
-    }
-    broadcast(ws, stringifiedData, false);
-  });
+  let receivedData = JSON.parse(data.toString());
+  if (receivedData.yes !== undefined) {
+    lastValue = parseFloat(receivedData.yes);
+  }
+  broadcast(ws, JSON.stringify(receivedData), false);
+});
+
 
   ws.on("close", (data) => {
     console.log("closing connection");
