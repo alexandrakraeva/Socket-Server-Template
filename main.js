@@ -19,8 +19,6 @@ const wss =
 server.listen(serverPort);
 console.log(`Server started on port ${serverPort} in stage ${process.env.NODE_ENV}`);
 
-let counter = 0.5;
-
 wss.on("connection", function (ws, req) {
   console.log("Connection Opened");
   console.log("Client size: ", wss.clients.size);
@@ -36,14 +34,7 @@ wss.on("connection", function (ws, req) {
       console.log('keepAlive');
       return;
     }
-    if (stringifiedData === '0.1') {
-      counter += 0.1;
-    } else if (stringifiedData === '-0.1') {
-      counter -= 0.1;
-    }
-
-    broadcast(ws, `Counter updated: ${counter}`, true);
-  });
+    broadcast(ws, stringifiedData, false);
   });
 
   ws.on("close", (data) => {
