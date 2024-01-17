@@ -22,7 +22,7 @@ console.log(`Server started on port ${serverPort} in stage ${process.env.NODE_EN
 
 wss.on("connection", function (ws, req) {
   // Existing code...
-  ws.send(JSON.stringify({ 'yes': lastValue.toFixed(1), 'no': lastValue.toFixed(1) }));
+  ws.send(JSON.stringify({ 'counter': lastValue.toFixed(1) })); // Send the latest counter value to the newly connected client
 });
 
   if (wss.clients.size === 1) {
