@@ -10,7 +10,6 @@ const server = http.createServer(app);
 const WebSocket = require("ws");
 
 let keepAliveId;
-let currentCounter = 0.5;
 
 const wss =
   process.env.NODE_ENV === "production"
@@ -23,8 +22,6 @@ console.log(`Server started on port ${serverPort} in stage ${process.env.NODE_EN
 wss.on("connection", function (ws, req) {
   console.log("Connection Opened");
   console.log("Client size: ", wss.clients.size);
-
-  ws.send(JSON.stringify({ 'yes': currentCounter.toFixed(1), 'no': currentCounter.toFixed(1) }));
 
   if (wss.clients.size === 1) {
     console.log("first connection. starting keepalive");
